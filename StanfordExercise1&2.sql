@@ -114,3 +114,65 @@ select name
 from reviewer join rating using(rID)
 group by name
 having(count(*)>=3)
+
+--Some directors directed more than one movie. For all such directors, return the titles of all movies directed by them, along with the director name.
+--Sort by director name, then movie title. (As an extra challenge, try writing the query both with and without COUNT.) 
+select title, director
+from movie
+where director in 
+(select director 
+from movie
+group by director
+having (count(*)>1))
+order by director,title
+
+--Find the movie(s) with the highest average rating. Return the movie title(s) and average rating. 
+--(Hint: This query is more difficult to write in SQLite than other systems; 
+--you might think of it as finding the highest average rating and then choosing the movie(s) with that average rating.) 
+select title,avgrate
+from(
+ select title,avgrate
+  from(
+   select avg(stars) as avgrate,title
+    from movie join rating using(mID)
+    group by title )
+  group by title
+  having avgrate=(select max(avgrate) 
+  	              from (select avg(stars) as avgrate,title
+                  from movie join rating using(mID)
+                  group by title )))
+--an alternative to this by using MySQL (note that on MySQL, should use join on command)
+select title,avgrate
+from (
+  select title,avg(stars)as avgrate
+  from movie join rating on movie.mid=rating.mid
+  group by title) As M1
+where M1.avgrate>=
+  all(select avg(stars)as avgrate
+  from movie join rating on movie.mid=rating.mid
+  group by title)
+
+--Find the movie(s) with the lowest average rating. Return the movie title(s) and average rating.
+--(Hint: This query may be more difficult to write in SQLite than other systems; 
+--you might think of it as finding the lowest average rating and then choosing the movie(s) with that average rating.) 
+select title,avgrate
+from(
+ select title,avgrate
+  from(
+   select avg(stars) as avgrate,title
+    from movie join rating using(mID)
+    group by title )
+  group by title
+  having avgrate=(select min(avgrate) 
+  	              from (select avg(stars) as avgrate,title
+                  from movie join rating using(mID)
+                  group by title )))
+
+--For each director, return the director's name together with the title(s) of the movie(s) they directed that received the highest rating among all of their movies, 
+--and the value of that rating. Ignore movies whose director is NULL. 
+select director,title,max(stars)
+from movie join rating using(mID)
+where director is not NULL 
+group by director
+--In this question, group by director it will return the one with the maximum rating??
+--try PostgreSQL later
