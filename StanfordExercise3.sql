@@ -21,3 +21,17 @@ from (likes join highschooler on likes.id1=highschooler.id) As Liker,
 (likes join highschooler on likes.id2=highschooler.id) As Likee
 where Liker.id1=Likee.id1 and Liker.id2=Likee.id2 and Liker.grade-2>=Likee.grade
 
+--3.For every pair of students who both like each other, return the name and grade of both students. 
+--Include each pair only once, with the two names in alphabetical order. 
+select h1.name, h1.grade, h2.name, h2.grade
+from Likes L1, Likes L2, highschooler H1, Highschooler H2
+where l1.id1=l2.id2 and l1.id2=l2.id1 and l1.id1=h1.id and l1.id2=h2.id and h1.name<h2.name
+order by h1.name
+
+--4.Find all students who do not appear in the Likes table (as a student who likes or is liked) and return their names and grades. 
+--Sort by grade, then by name within each grade. 
+select name, grade
+from highschooler
+where id not in (select id1 from likes as id union select id2 from likes as id)
+order by grade, name
+
