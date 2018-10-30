@@ -115,6 +115,11 @@ from reviewer join rating using(rID)
 group by name
 having(count(*)>=3)
 
+--GROUP BY and HAVING. The HAVING clause is tested after the GROUP BY.
+-- You can test the aggregated values with a HAVING clause. 
+--Show the total population of those continents with a total population of at least half a billion.
+
+
 --Some directors directed more than one movie. For all such directors, return the titles of all movies directed by them, along with the director name.
 --Sort by director name, then movie title. (As an extra challenge, try writing the query both with and without COUNT.) 
 select title, director
